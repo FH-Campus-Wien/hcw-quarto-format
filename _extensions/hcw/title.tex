@@ -1,11 +1,16 @@
 $if(title)$
+\newcommand{\HCWLogoPath}{_extensions/hcw/assets/images/hcw-logo-anthrazit.png}
+\IfFileExists{_extensions/FH-Campus-Wien/hcw/assets/images/hcw-logo-anthrazit.png}{%
+  \renewcommand{\HCWLogoPath}{_extensions/FH-Campus-Wien/hcw/assets/images/hcw-logo-anthrazit.png}%
+}{}
+
 \makeatletter
 \renewcommand{\maketitle}{%
   \begin{titlepage}
     \thispagestyle{empty}
     \sffamily
     \noindent
-    \includegraphics[width=42mm]{hcw-logo-anthrazit.png}
+    \includegraphics[width=42mm]{\HCWLogoPath}
 
     \vspace*{34mm}
 

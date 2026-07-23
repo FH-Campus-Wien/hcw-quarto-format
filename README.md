@@ -97,7 +97,7 @@ neuesten Stand.
 Quarto kann einen bestimmten GitHub-Tag installieren:
 
 ```shell
-quarto add FH-Campus-Wien/hcw-quarto-format@v0.1.0 --no-prompt
+quarto add FH-Campus-Wien/hcw-quarto-format@v0.1.1 --no-prompt
 ```
 
 Die installierte Erweiterung liegt anschließend unter
@@ -108,3 +108,42 @@ Maintainer-Update erforderlich, nicht beim späteren Rendern.
 Die gepflegten HCW-Templates kapseln diesen Befehl in einem Docker-basierten
 Maintainer-Task und prüfen danach die installierte Versionsnummer sowie alle
 erforderlichen Ressourcen.
+
+## Anhang: QMD-, LaTeX- und PDF-Dateien
+
+Beim Rendern entsteht eine Verarbeitungskette:
+
+```text
+template.qmd
+    ↓ Quarto und Pandoc
+template.tex
+    ↓ LuaLaTeX
+template.pdf
+```
+
+Die Dateien haben unterschiedliche Aufgaben:
+
+| Datei | Aufgabe | Versioniert |
+|---|---|---|
+| `template.qmd` | mit Markdown geschriebenes Testdokument des Formats | ja |
+| `template.tex` | automatisch erzeugte LaTeX-Zwischendatei zur Fehlersuche | nein |
+| `template.pdf` | gerendertes visuelles Testergebnis | nein |
+| `_extensions/hcw/header.tex` | gemeinsame Schrift-, Seiten- und Beschriftungseinstellungen | ja |
+| `_extensions/hcw/title.tex` | Aufbau der HCW-Titelseite | ja |
+
+`template.tex` wird erzeugt, weil im Testdokument `keep-tex: true` aktiviert
+ist. Die Datei darf gelöscht werden und wird beim nächsten Rendern neu
+erstellt. Manuelle Änderungen daran gehen verloren. Dauerhafte
+Layoutänderungen gehören ausschließlich in `header.tex`, `title.tex` oder
+`_extension.yml`.
+
+Das Logo besitzt ebenfalls nur eine Quelle:
+
+```text
+_extensions/hcw/assets/images/hcw-logo-anthrazit.png
+```
+
+In einer installierten Dokumentvorlage liegt dieselbe versionierte Datei unter
+`_extensions/FH-Campus-Wien/hcw/assets/images/`. Die Titelseite greift direkt
+auf diese Extension-Datei zu; eine zusätzliche Logo-Kopie im Projektstamm ist
+nicht erforderlich.
