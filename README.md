@@ -77,8 +77,91 @@ Die originale Helvetica ist proprietär und darf nicht einfach mit dem
 Gyre Heros. Diese freie OpenType-Schrift basiert auf URW Nimbus Sans und ist
 metrisch und optisch mit Helvetica kompatibel. Der HCW-Builder stellt sie für
 LuaLaTeX reproduzierbar bereit. Sollte später eine lizenzierte Hochschulschrift
-verfügbar sein, kann sie an einer zentralen Stelle im Format ausgetauscht
+verfügbar sein, kann sie über den folgenden kontrollierten Prozess ausgetauscht
 werden.
+
+### Schrift austauschen
+
+Die Schriftdateien und die Schriftauswahl haben getrennte Zuständigkeiten:
+
+| Repository | Zuständigkeit |
+|---|---|
+| `hcw-document-builder` | stellt die Schrift im Docker-Image bereit |
+| `hcw-quarto-format` | wählt die Schriftfamilien für Fließtext, Überschriften und Code |
+| `hcw-template-*` | übernimmt freigegebene Builder- und Formatversionen |
+
+Der Austausch wird von den Maintainer:innen in dieser Reihenfolge durchgeführt:
+
+1. **Lizenz prüfen.** Die Lizenz muss die Verteilung im öffentlichen
+   GitHub-Repository und im öffentlichen Docker-Image ausdrücklich erlauben.
+   Ist das nicht erlaubt, darf die Schrift dort nicht eingebunden werden. In
+   diesem Fall bleibt TeX Gyre Heros aktiv oder es wird eine getrennte,
+   nichtöffentliche Toolchain benötigt.
+2. **Schrift im Builder bereitstellen.** Eine frei paketierte Schrift wird in
+   `hcw-document-builder/Dockerfile` als Betriebssystempaket ergänzt. Eigene
+   `.otf`- oder `.ttf`-Dateien dürfen nur bei entsprechender Lizenz in das Image
+   kopiert und im Container registriert werden.
+3. **Smoke-Test umstellen.** In
+   `hcw-document-builder/tests/preamble.tex` werden `\setmainfont` und
+   `\setsansfont` auf den exakten internen Familiennamen geändert. Der
+   Docker-Build muss diesen PDF-Test erfolgreich abschließen; damit ist
+   nachgewiesen, dass LuaLaTeX die Schrift tatsächlich findet.
+4. **Format konfigurieren.** In `_extensions/hcw/_extension.yml` werden die
+   zentralen Fontoptionen angepasst:
+
+   ```yaml
+   mainfont: Name der Schrift
+   sansfont: Name der Schrift
+   monofont: Name der Codeschrift
+   ```
+
+   `mainfont` bestimmt den Fließtext, `sansfont` insbesondere Überschriften und
+   `monofont` Codeblöcke. Der interne Familienname muss exakt mit dem im
+   Container installierten Namen übereinstimmen.
+5. **Lokal gemeinsam testen.** Zuerst wird das geänderte Builder-Image lokal
+   gebaut:
+
+   ```bash
+   cd hcw-document-builder
+   docker build \
+     --platform linux/amd64 \
+     --build-arg BUILD_VERSION=font-test \
+     --tag hcw-document-builder:font-test \
+     .
+   ```
+
+   Anschließend wird im Format-Repository mit genau diesem Image gerendert:
+
+   ```bash
+   cd ../hcw-quarto-format
+   docker run --rm --network none --platform linux/amd64 \
+     --mount "type=bind,source=$PWD,target=/work" \
+     --workdir /work \
+     hcw-document-builder:font-test \
+     render template.qmd
+   ```
+
+   `template.pdf` wird visuell kontrolliert. Zu prüfen sind insbesondere
+   Titelseite, Umlaute, fett und kursiv gesetzter Text, Überschriften,
+   Tabellen, Formeln, Bildunterschriften und Code.
+6. **Builder veröffentlichen.** Erst nach erfolgreichem Test wird eine neue
+   Builder-Version getaggt und das öffentliche Image veröffentlicht, zum
+   Beispiel `hcw-document-builder:1.3.0`.
+7. **Format veröffentlichen.** Danach wird die Builder-Version in den
+   Testbefehlen dieses Repositories aktualisiert, die Formatversion in
+   `_extension.yml` erhöht und ein neuer Format-Tag veröffentlicht.
+8. **Dokumentvorlagen aktualisieren.** In jeder Vorlage werden der
+   Builder-Image-Tag, `hcw-format-version.txt`, die VS-Code-Tasks und die
+   dokumentierten Docker-Befehle angepasst. Anschließend wird der Task
+   `Maintainer: HCW-Format aktualisieren` ausgeführt.
+9. **Offline-Abnahme durchführen.** Jede betroffene Vorlage wird abschließend
+   mit `--network none` gerendert und die erzeugte PDF visuell geprüft. Erst
+   Builder-Version, Formatkopie und Versionsdatei gemeinsam committen.
+
+Eine reine Änderung von `mainfont` ohne Bereitstellung derselben Schrift im
+Builder ist nicht ausreichend: Sie würde erst beim PDF-Build mit einer
+fehlenden Schrift scheitern. Umgekehrt verändert eine zusätzlich installierte
+Schrift das Layout nicht, solange das Format sie nicht auswählt.
 
 ## Verwendung in Vorlagen
 
