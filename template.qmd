@@ -1,0 +1,56 @@
+---
+title: "HCW Quarto Format"
+subtitle: "Visueller Test der gemeinsamen PDF-Gestaltung"
+document-type: "Technische Dokumentation"
+author: "Maxima Musterfrau"
+date: today
+date-format: "D. MMMM YYYY"
+version: "0.1"
+lang: de
+format:
+  hcw-pdf:
+    toc: true
+    number-sections: true
+    keep-tex: true
+---
+
+# Einführung
+
+Dieses Dokument prüft die gemeinsame Titelseite, Typografie, Kopfzeilen,
+Abbildungen, Tabellen, Querverweise und Codeblöcke.
+
+> **Hinweis:** Eine HCW-Vorlage enthält Inhalte und eine Dokumentstruktur. Das
+> HCW-Format liefert die wiederverwendbare visuelle Gestaltung.
+
+## Abbildung
+
+![HCW-Logo als Testabbildung](./_extensions/hcw/assets/images/hcw-logo-anthrazit.png){#fig-logo width=45%}
+
+@fig-logo zeigt eine beschriftete Abbildung mit Querverweis.
+
+## Tabelle
+
+| Bestandteil | Zuständigkeit |
+|---|---|
+| Logo und Schrift | HCW-Format |
+| Kapitel und Beispieltexte | Dokumentvorlage |
+| Quarto, Pandoc und TeX Live | Builder-Image |
+
+: Aufteilung der Dokumentplattform {#tbl-aufteilung}
+
+Die Aufgabenverteilung ist in @tbl-aufteilung zusammengefasst.
+
+## Formel und Code
+
+Der Wirkungsgrad kann beispielsweise als
+
+$$
+\eta = \frac{P_\mathrm{out}}{P_\mathrm{in}}
+$$
+
+geschrieben werden.
+
+```python
+def wirkungsgrad(p_out, p_in):
+    return p_out / p_in
+```

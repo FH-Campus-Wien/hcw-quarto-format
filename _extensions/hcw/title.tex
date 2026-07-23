@@ -1,0 +1,47 @@
+$if(title)$
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{titlepage}
+    \thispagestyle{empty}
+    \sffamily
+    \noindent
+    \includegraphics[width=42mm]{hcw-logo-anthrazit.png}
+
+    \vspace*{34mm}
+
+    $if(document-type)$
+    {\large\bfseries\color{HCWAnthrazit} $document-type$\par}
+    \vspace{5mm}
+    $endif$
+
+    {\huge\bfseries\color{HCWAnthrazit} $title$\par}
+
+    $if(subtitle)$
+    \vspace{5mm}
+    {\Large $subtitle$\par}
+    $endif$
+
+    \vfill
+
+    $if(authors)$
+    {\large
+      $for(authors)$
+      $it.name.literal$$sep$\\
+      $endfor$
+      \par
+    }
+    $endif$
+
+    $if(version)$
+    \vspace{2mm}
+    {\normalsize Version $version$\par}
+    $endif$
+
+    $if(date)$
+    \vspace{2mm}
+    {\normalsize $date$\par}
+    $endif$
+  \end{titlepage}
+}
+\makeatother
+$endif$

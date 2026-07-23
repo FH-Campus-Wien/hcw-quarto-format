@@ -1,0 +1,11 @@
+/.quarto/
+/_freeze/
+/_site/
+/template.pdf
+/template.tex
+/hcw-logo-anthrazit.png
+/HCW_BA_Abschlussarbeit_deutsch_01.dotx
+*.aux
+*.log
+*.out
+*.toc
