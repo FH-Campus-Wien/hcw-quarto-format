@@ -91,3 +91,20 @@ Während der Entwicklung kann das Format direkt aus diesem Repository getestet
 werden. Nach der ersten Freigabe wird es versioniert; Dokumentvorlagen
 übernehmen dann bewusst eine konkrete Version statt automatisch den jeweils
 neuesten Stand.
+
+## Release in eine Dokumentvorlage übernehmen
+
+Quarto kann einen bestimmten GitHub-Tag installieren:
+
+```shell
+quarto add FH-Campus-Wien/hcw-quarto-format@v0.1.0 --no-prompt
+```
+
+Die installierte Erweiterung liegt anschließend unter
+`_extensions/FH-Campus-Wien/hcw/`. Dieser Ordner wird gemeinsam mit der
+Dokumentvorlage versioniert. Dadurch ist GitHub nur beim bewussten
+Maintainer-Update erforderlich, nicht beim späteren Rendern.
+
+Die gepflegten HCW-Templates kapseln diesen Befehl in einem Docker-basierten
+Maintainer-Task und prüfen danach die installierte Versionsnummer sowie alle
+erforderlichen Ressourcen.
